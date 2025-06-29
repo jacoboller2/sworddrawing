@@ -1,0 +1,224 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sword Draw</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;700&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at center, #0d0d0d 0%, #1a1a2e 100%);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #444;
+  padding: 3rem;
+  border-radius: 30px;
+  width: 95vw;
+  max-width: 1200px;
+  height: 90vh;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+gap: 2.5rem;
+
+  align-items: center;
+  position: relative;
+  backdrop-filter: blur(10px);
+}
+
+/* TITLE */
+h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 4rem;
+  color: #00f5d4;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 0 0 10px #00f5d4aa;
+  margin: 0;
+  text-align: center;
+}
+
+/* INPUT SECTION */
+.input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+input[type="text"] {
+  background: #0d1b2a;
+  border: 2px solid #00f5d4;
+  color: #fff;
+  font-size: 1.8rem;
+  padding: 1.5rem 2rem;
+  border-radius: 20px;
+  min-width: 300px;
+  box-shadow: 0 0 10px #00f5d466;
+  transition: 0.3s ease;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: #ffd500;
+  box-shadow: 0 0 15px #ffd50099;
+}
+
+/* BUTTON */
+button {
+  background: linear-gradient(45deg, #ffd500, #ff8c00);
+  border: none;
+  color: #000;
+  font-size: 1.8rem;
+  font-weight: bold;
+  padding: 1.5rem 3rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 15px #ffdd57aa;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #ffdd57cc;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* VERSE DISPLAY */
+#verseDisplay {
+  font-size: 3.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: inset 0 0 20px #00f5d455;
+  text-shadow: 0 0 8px #00f5d4;
+  text-align: center;
+  width: 100%;
+  word-wrap: break-word;
+}
+
+/* FULLSCREEN BUTTON */
+#fullscreenBtn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 20px;
+  height: 45px;
+  font-size: 0.5rem;
+  border: none;
+  border-radius: 50%;
+  background: #00f5d4;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 12px #00f5d4aa;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  z-index: 1000;
+}
+
+#fullscreenBtn:hover {
+  transform: scale(1.1);
+  background: #00e0c1;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  input[type="text"], button {
+    font-size: 1.3rem;
+    padding: 1rem;
+  }
+
+  #verseDisplay {
+    font-size: 2rem;
+  }
+}
+</style>
+
+
+
+
+<div class="container">
+  <h1>Draw a Sword Verse</h1>
+
+  <div class="input-row">
+    <input type="text" id="topic" placeholder="Enter a topic..." />
+    <button onclick="drawSword()">Draw Sword</button>
+  </div>
+
+  <p id="verseDisplay"></p>
+</div>
+<button id="fullscreenBtn">Go Fullscreen</button>
+
+
+
+  <script>
+  document.getElementById('fullscreenBtn').addEventListener('click', () => {
+  const elem = document.documentElement; // whole page
+
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) { /* Safari */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE11 */
+    elem.msRequestFullscreen();
+  }
+});
+
+    async function drawSword() {
+      const display = document.getElementById('verseDisplay');
+      const topic = document.getElementById('topic').value.trim();
+
+      if (!topic) {
+        display.innerText = "Please enter a topic.";
+        return;
+      }
+
+      display.innerText = "Drawing sword...";
+
+      try {
+        const res = await fetch('http://localhost:5000/verse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic })
+        });
+
+        if (!res.ok) {
+          throw new Error(`Server returned ${res.status}`);
+        }
+
+        const data = await res.json();
+        display.innerText = `📖 ${data.verse}`;
+      } catch (err) {
+        display.innerText = `❌ Error: ${err.message}`;
+      }
+    }
+  </script>
+</body>
+</html>

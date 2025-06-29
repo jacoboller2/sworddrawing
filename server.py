@@ -10,6 +10,11 @@ openai.api_key = 'sk-proj-QaYInXuOvd-I3ATkKzqpH6zmSk6L4Ln52tA7s76BX4WmTU4GbQFqGe
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/')
+def index():
+    return '✅ Server is live! Try POSTing to /verse'
+
+
 @app.route('/verse', methods=['POST'])
 def get_verse():
     try:

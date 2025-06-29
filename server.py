@@ -11,8 +11,8 @@ app = Flask(__name__)
 CORS(app)
 
 @app.route('/')
-def index():
-    return '✅ Server is live! Try POSTing to /verse'
+def home():
+    return send_file('index.html')
 
 
 @app.route('/verse', methods=['POST'])

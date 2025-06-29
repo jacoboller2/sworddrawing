@@ -4,9 +4,7 @@ from flask import send_file
 import openai
 import os
 
-# Initialize OpenAI client, reading API key from env variable for safety
-openai.api_key = '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'
-# 🔐 Direct API key set (not recommended for production)
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 CORS(app)
